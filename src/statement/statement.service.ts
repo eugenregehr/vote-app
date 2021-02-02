@@ -1,25 +1,27 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { create } from 'domain';
 import { Model } from 'mongoose';
 
-// import { STATEMENTS } from "./statement.mock";
 import { Statement } from "./statement.model";
 
 @Injectable()
 export class StatementService {
-    // private statements: Statement[] = STATEMENTS;
 
     constructor(
         @InjectModel('Statement') private readonly statementModel: Model<Statement>,
     ) { }
 
     async getStatements() {
-        const statements = await this.statementModel.find().exec();
+        const statements = await this.statementModel.find().populate("User_id", "name image").populate("Category_ids", "category").exec();
         return statements.map(statement => ({
             id: statement.id,
+            createdAt: statement.createdAt,
+            updatedAt: statement.updatedAt,
             statement: statement.statement,
-            categoryId: statement.categoryId,
             favorite: statement.favorite,
+            Category_ids: statement.Category_ids,
+            User_id: statement.User_id
         }));
     }
 
@@ -27,17 +29,22 @@ export class StatementService {
         const statement = await this.findStatement(statementId);
         return {
             id: statement.id,
+            createdAt: statement.createdAt,
+            updatedAt: statement.updatedAt,
             statement: statement.statement,
-            categoryId: statement.categoryId,
             favorite: statement.favorite,
+            User_id: statement.User_id
         };
     }
 
-    async insertStatement(statement: string, categoryId: number, favorite: boolean) {
+    async insertStatement(statement: string, favorite: boolean, Category_ids: string[], User_id: string) {
+        const createdAt = new Date;
         const newStatement = new this.statementModel({
+            createdAt,
             statement,
-            categoryId,
             favorite,
+            Category_ids,
+            User_id,
         });
         const result = await newStatement.save();
         return result.id as string;
@@ -53,26 +60,23 @@ export class StatementService {
     async updateStatement(
         statementId: string,
         statementText: string,
-        categoryId: number,
         favorite: boolean,
     ) {
         const updatedStatement = await this.findStatement(statementId);
         if (statementText) {
             updatedStatement.statement = statementText;
         }
-        if (categoryId) {
-            updatedStatement.categoryId = categoryId;
-        }
         if (favorite) {
             updatedStatement.favorite = favorite;
         }
+        updatedStatement.updatedAt = new Date;
         updatedStatement.save();
     }
 
     private async findStatement(id: string): Promise<Statement> {
         let statement;
         try {
-            statement = await this.statementModel.findById(id).exec();
+            statement = await this.statementModel.findById(id).populate("User_id", "name image").exec();
         } catch (error) {
             throw new HttpException('Could not find statement.', 404);
         }

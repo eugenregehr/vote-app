@@ -20,13 +20,15 @@ export class StatementController {
     @Post()
     async postStatement(
         @Body('statement') statement: string,
-        @Body('categoryId') categoryId: number,
         @Body('favorite') favorite: boolean,
+        @Body('Category_ids') Category_ids: string[],
+        @Body('User_id') User_id: string,
     ) {
         const generatedId = await this.statementService.insertStatement(
             statement,
-            categoryId,
-            favorite
+            favorite,
+            Category_ids,
+            User_id,
         )
         return { id: generatedId }
     }
@@ -41,10 +43,9 @@ export class StatementController {
     async updateStatement(
         @Param('id') id: string,
         @Body('statement') statement: string,
-        @Body('categoryId') categoryId: number,
-        @Body('favorite') favorite: boolean
+        @Body('favorite') favorite: boolean,
     ) {
-        await this.statementService.updateStatement(id, statement, categoryId, favorite);
+        await this.statementService.updateStatement(id, statement, favorite);
         return null
     }
 

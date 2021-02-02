@@ -1,15 +1,28 @@
-import { IsString, IsNumber, IsBoolean, IsNotEmpty } from "class-validator";
 import * as mongoose from 'mongoose';
 
 export const StatementSchema = new mongoose.Schema({
+    createdAt: { type: Date },
+    updatedAt: { type: Date },
     statement: { type: String, required: true },
-    categoryId: { type: Number },
     favorite: { type: Boolean },
+    Category_ids: [{
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Category'
+    }],
+    User_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'User'
+    },
 });
 
 export interface Statement extends mongoose.Document {
     id: string;
+    createdAt: Date,
+    updatedAt: Date,
     statement: string;
-    categoryId: number;
     favorite: boolean;
+    Category_ids: string[];
+    User_id: string;
 }
