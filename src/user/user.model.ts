@@ -1,4 +1,3 @@
-import { IsString, IsNumber, IsBoolean, IsNotEmpty } from "class-validator";
 import * as mongoose from 'mongoose';
 
 export const UserSchema = new mongoose.Schema({

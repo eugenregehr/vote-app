@@ -1,6 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { create } from 'domain';
 import { Model } from 'mongoose';
 
 import { Statement } from "./statement.model";
