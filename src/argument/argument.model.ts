@@ -9,13 +9,15 @@ export const ArgumentSchema = new mongoose.Schema({
     required: true,
     ref: 'User'
   },
-  Vote_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Vote' }
-  // Comment_ids: [{
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   required: true,
-  //   ref: 'Comment'
-  // }],
-
+  Vote_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Vote' },
+  Comment_ids: [{
+    type: mongoose.Schema.Types.ObjectId, ref: 'Comment'
+  }],
+  Statement_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'Statement'
+  }
 });
 
 export interface Argument extends mongoose.Document {
@@ -24,5 +26,7 @@ export interface Argument extends mongoose.Document {
   isPro: boolean,
   argument: string;
   User_id: string;
-  Vote_id: string
+  Vote_id: string,
+  Comment_ids: string[],
+  Statement_id: string
 }

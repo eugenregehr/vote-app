@@ -40,6 +40,15 @@ export class StatementController {
     }
 
     @Patch(':id')
+    async addArgumentId(
+        @Param('id') id: string,
+        @Body('Argument_id') Argument_id: string,
+    ) {
+        await this.statementService.addArgumentId(Argument_id, id);
+        return null
+    }
+
+    @Patch(':id')
     async updateStatement(
         @Param('id') id: string,
         @Body('statement') statement: string,

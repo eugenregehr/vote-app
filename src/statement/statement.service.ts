@@ -12,7 +12,15 @@ export class StatementService {
     ) { }
 
     async getStatements() {
-        const statements = await this.statementModel.find().populate("User_id", "name image").populate("Category_ids", "category").exec();
+        const statements = await this.statementModel
+            .find()
+            .populate("User_id", "name image")
+            .populate("Category_ids", "category")
+            .populate({
+                path: "Argument_ids",
+                select: "createdAt isPro argument", populate: { path: "User_id Vote_id", select: "name votes" }
+            })
+            .exec();
         return statements.map(statement => ({
             id: statement.id,
             createdAt: statement.createdAt,
@@ -20,7 +28,8 @@ export class StatementService {
             statement: statement.statement,
             favorite: statement.favorite,
             Category_ids: statement.Category_ids,
-            User_id: statement.User_id
+            User_id: statement.User_id,
+            Argument_ids: statement.Argument_ids
         }));
     }
 
@@ -32,28 +41,30 @@ export class StatementService {
             updatedAt: statement.updatedAt,
             statement: statement.statement,
             favorite: statement.favorite,
-            User_id: statement.User_id
+            User_id: statement.User_id,
+            Argument_ids: statement.Argument_ids,
         };
     }
 
     async insertStatement(statement: string, favorite: boolean, Category_ids: string[], User_id: string) {
         const createdAt = new Date;
+        const argumentIds = [];
         const newStatement = new this.statementModel({
             createdAt,
             statement,
             favorite,
             Category_ids,
             User_id,
+            argumentIds
         });
         const result = await newStatement.save();
         return result.id as string;
     }
 
-    async deleteStatement(statementId: string) {
-        const result = await this.statementModel.deleteOne({ _id: statementId }).exec();
-        if (result.n === 0) {
-            throw new HttpException('Could not find statement.', 404);
-        }
+    async addArgumentId(argumentId: string, statementId: string) {
+        const updatedStatement = await this.findStatement(statementId);
+        updatedStatement.Argument_ids.push(argumentId)
+        updatedStatement.save();
     }
 
     async updateStatement(
@@ -70,6 +81,13 @@ export class StatementService {
         }
         updatedStatement.updatedAt = new Date;
         updatedStatement.save();
+    }
+
+    async deleteStatement(statementId: string) {
+        const result = await this.statementModel.deleteOne({ _id: statementId }).exec();
+        if (result.n === 0) {
+            throw new HttpException('Could not find statement.', 404);
+        }
     }
 
     private async findStatement(id: string): Promise<Statement> {

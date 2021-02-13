@@ -21,10 +21,12 @@ export class CommentController {
   async postComment(
     @Body('comment') comment: string,
     @Body('User_id') User_id: string,
+    @Body('Argument_id') Argument_id: string,
   ) {
     const generatedId = await this.commentService.insertComment(
       comment,
       User_id,
+      Argument_id
     )
     return { id: generatedId }
   }

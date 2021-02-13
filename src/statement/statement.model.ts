@@ -15,6 +15,11 @@ export const StatementSchema = new mongoose.Schema({
         required: true,
         ref: 'User'
     },
+    Argument_ids: [{
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Argument'
+    }]
 });
 
 export interface Statement extends mongoose.Document {
@@ -25,4 +30,5 @@ export interface Statement extends mongoose.Document {
     favorite: boolean;
     Category_ids: string[];
     User_id: string;
+    Argument_ids: string[];
 }

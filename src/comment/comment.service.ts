@@ -3,12 +3,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { Comment } from "./comment.model";
+import { ArgumentService } from "../argument/argument.service"
 
 @Injectable()
 export class CommentService {
 
   constructor(
     @InjectModel('Comment') private readonly commentModel: Model<Comment>,
+    private readonly argumentService: ArgumentService
   ) { }
 
   async getComments() {
@@ -17,7 +19,8 @@ export class CommentService {
       id: comment.id,
       createdAt: comment.createdAt,
       comment: comment.comment,
-      User_id: comment.User_id
+      User_id: comment.User_id,
+      Argument_id: comment.Argument_id
     }));
   }
 
@@ -27,18 +30,23 @@ export class CommentService {
       id: comment.id,
       createdAt: comment.createdAt,
       comment: comment.comment,
-      User_id: comment.User_id
+      User_id: comment.User_id,
+      Argument_id: comment.Argument_id
     };
   }
 
-  async insertComment(comment: string, User_id: string) {
+  async insertComment(comment: string, User_id: string, Argument_id: string) {
     const createdAt = new Date;
+
     const newComment = new this.commentModel({
       createdAt,
       comment,
       User_id,
+      Argument_id
     });
     const result = await newComment.save();
+
+    this.argumentService.addCommentId(Argument_id, result.id)
     return result.id as string;
   }
 

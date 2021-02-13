@@ -3,14 +3,12 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 import { Vote } from "./vote.model";
-// import { ArgumentService } from "../argument/argument.service";
 
 @Injectable()
 export class VoteService {
 
   constructor(
     @InjectModel('Vote') private readonly voteModel: Model<Vote>,
-    // private readonly argumentService: ArgumentService
   ) { }
 
   async getVotes() {
@@ -40,7 +38,6 @@ export class VoteService {
       Argument_id
     });
     const result = await newVote.save();
-    // this.argumentService.setVoteId(Argument_id, result.id);
     return result.id as string;
   }
 
@@ -49,6 +46,30 @@ export class VoteService {
     if (result.n === 0) {
       throw new HttpException('Could not find vote.', 404);
     }
+  }
+
+  async upVote(voteId: string, isUpvote: boolean, userId: string) {
+    const vote = await this.findVote(voteId);
+    // console.log(vote.User_id.includes(userId));
+    let users: Array<String> = [];
+
+    if (vote.User_id.length > 0) {
+      users = vote.User_id.map(user => user["_id"]);
+    }
+    // add upvote if user not exist
+    if (isUpvote && !users.includes(userId)) {
+      vote.User_id.push(userId)
+      vote.votes += 1;
+    }
+    // delete upvote if user exist
+    if (!isUpvote && users.includes(userId)) {
+      const index = users.indexOf(userId)
+      if (index > -1) {
+        vote.User_id.splice(index, 1);
+      }
+      vote.votes -= 1;
+    }
+    vote.save();
   }
 
   private async findVote(id: string): Promise<Vote> {

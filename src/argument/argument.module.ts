@@ -5,12 +5,13 @@ import { ArgumentController } from './argument.controller';
 import { ArgumentService } from './argument.service';
 import { ArgumentSchema } from "./argument.model";
 import { VoteModule } from "../vote/vote.module";
+import { StatementModule } from "../statement/statement.module";
 
 
 @Module({
-  imports: [VoteModule, MongooseModule.forFeature([{ name: "Argument", schema: ArgumentSchema }])],
+  imports: [VoteModule, StatementModule, MongooseModule.forFeature([{ name: "Argument", schema: ArgumentSchema }])],
   controllers: [ArgumentController],
   providers: [ArgumentService],
-  exports: []
+  exports: [ArgumentService],
 })
 export class ArgumentModule { }

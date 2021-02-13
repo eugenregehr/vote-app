@@ -31,6 +31,16 @@ export class VoteController {
     return { id: generatedId }
   }
 
+  @Patch(":id")
+  async upVote(
+    @Param('id') id: string,
+    @Body('isUpvote') isUpvote: boolean,
+    @Body('User_id') User_id: string,
+  ) {
+    await this.voteService.upVote(id, isUpvote, User_id)
+    return null
+  }
+
   @Delete(':id')
   async deleteVote(@Param('id') id: string) {
     await this.voteService.deleteVote(id);

@@ -8,6 +8,10 @@ export const CommentSchema = new mongoose.Schema({
     required: true,
     ref: 'User'
   },
+  Argument_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Argument'
+  }
 });
 
 export interface Comment extends mongoose.Document {
@@ -15,4 +19,5 @@ export interface Comment extends mongoose.Document {
   createdAt: Date,
   comment: string;
   User_id: string;
+  Argument_id: string;
 }

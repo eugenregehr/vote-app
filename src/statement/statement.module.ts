@@ -8,6 +8,7 @@ import { StatementSchema } from "./statement.model";
 @Module({
   imports: [MongooseModule.forFeature([{ name: "Statement", schema: StatementSchema }])],
   controllers: [StatementController],
-  providers: [StatementService]
+  providers: [StatementService],
+  exports: [StatementService]
 })
 export class StatementModule { }

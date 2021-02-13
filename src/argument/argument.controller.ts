@@ -23,12 +23,14 @@ export class ArgumentController {
     @Body('argument') argument: string,
     @Body('User_id') User_id: string,
     @Body('Vote_id') Vote_id: string,
+    @Body('Statement_id') Statement_id: string,
   ) {
     const generatedId = await this.argumentService.insertArgument(
       isPro,
       argument,
       User_id,
-      Vote_id
+      Vote_id,
+      Statement_id
     )
     return { id: generatedId }
   }
@@ -39,6 +41,15 @@ export class ArgumentController {
     @Body('Vote_id') Vote_id: string,
   ) {
     await this.argumentService.setVoteId(id, Vote_id);
+    return null
+  }
+
+  @Patch(':id')
+  async addCommentId(
+    @Param('id') id: string,
+    @Body('Comment_id') Comment_id: string,
+  ) {
+    await this.argumentService.addCommentId(id, Comment_id);
     return null
   }
 
