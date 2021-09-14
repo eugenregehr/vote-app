@@ -7,6 +7,7 @@ import { CategoryModule } from './category/category.module';
 import { CommentModule } from './comment/comment.module';
 import { VoteModule } from './vote/vote.module';
 import { ArgumentModule } from './argument/argument.module';
+import mongodb from "./mongodb";
 
 @Module({
   imports: [
@@ -16,7 +17,7 @@ import { ArgumentModule } from './argument/argument.module';
     CategoryModule,
     CommentModule,
     VoteModule,
-    MongooseModule.forRoot('mongodb+srv://eugen:EufInkQHmhYrey15@cluster0.rlgev.mongodb.net/nestjs-voteapp?retryWrites=true&w=majority')
+    MongooseModule.forRoot(mongodb.config)
   ]
 })
 export class AppModule { }
